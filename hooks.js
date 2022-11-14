@@ -1,5 +1,3 @@
-// namespace useState in a react object, module pattern
-
 const React = (() => {
     let hooks = [];
     let index = 0;
@@ -13,18 +11,33 @@ const React = (() => {
         return [state, setState];
     }
 
+    function useEffect(cb, depArray) {
+        const oldDeps = hooks[index];
+        let hasChanged = true;
+        if (oldDeps) {
+            hasChanged = depArray.some((dep, i) => !Object.is(dep, oldDeps[i]));
+        }
+        if (hasChanged) {
+            cb();
+        }
+        hooks[index] = depArray;
+    }
+
     function render(component) {
         index = 0;
         const c = component();
         c.render();
         return c;
     }
-    return { useState, render };
+    return { useState, useEffect, render };
 })();
 
 function Component() {
     const [count, setCount] = React.useState(1);
     const [text, setText] = React.useState("Test");
+    React.useEffect(() => {
+        console.log("effect test");
+    }, [text]);
     return {
         render: () => {
             console.log({ count, text });
@@ -40,6 +53,6 @@ function Component() {
 
 var app = React.render(Component);
 app.click();
-var app = React.render(Component);
+app = React.render(Component);
 app.type("vue");
-var app = React.render(Component);
+app = React.render(Component);
