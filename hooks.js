@@ -1,16 +1,20 @@
 // namespace useState in a react object, module pattern
 
 const React = (() => {
-    let _val;
+    let hooks = [];
+    let index = 0;
     function useState(initVal) {
-        let state = _val || initVal;
+        let state = hooks[index] || initVal;
+        let _index = index;
         let setState = (newVal) => {
-            _val = newVal;
+            hooks[_index] = newVal;
         };
+        index++;
         return [state, setState];
     }
 
     function render(component) {
+        index = 0;
         const c = component();
         c.render();
         return c;
