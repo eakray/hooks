@@ -10,7 +10,9 @@ const React = (() => {
         index++;
         return [state, setState];
     }
-
+    function useRef(val) {
+        return useState({ current: val })[0];
+    }
     function useEffect(cb, depArray) {
         const oldDeps = hooks[index];
         let hasChanged = true;
@@ -29,17 +31,19 @@ const React = (() => {
         c.render();
         return c;
     }
-    return { useState, useEffect, render };
+    return { useState, useEffect, useRef, render };
 })();
 
 function Component() {
     const [count, setCount] = React.useState(1);
     const [text, setText] = React.useState("Test");
+    const ref = React.useRef(1);
     React.useEffect(() => {
         console.log("effect test");
     }, [text]);
     return {
         render: () => {
+            console.log(ref.current);
             console.log({ count, text });
         },
         click: () => {
